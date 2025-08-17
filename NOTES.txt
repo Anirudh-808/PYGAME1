@@ -1,0 +1,199 @@
+THIS IS A FILE FOR JUST TAKING NOTES ON PYGAME
+GAME DOCS
+
+*******************
+TO INITIALIZE THE WINDOW AND 
+PYGAME ITSELF
+*******************
+
+=> Always import the pygame module first
+=> Use the pygame.init() method to initialize pygame
+
+=> to ensure the window created remains until we close it
+    use a while loop with a variable that becomes false when we close the window
+
+=> to create a window use 
+    pygame.display.set_mode((height, width))
+    and equate this to some variable
+
+=> to make sure the window doesnt close by itself use the below
+    
+while running:
+    for event in pygame.event.get():
+        #checks if the window is being closed
+        if event.type == pygame.QUIT:
+            running = False
+
+it checks among all running events and checks if any of them is QUIT
+
+the while loop above is the "game loop"
+
+*******************
+REMEMBER, ANYTHING THAT WE WANT TO REMAIN IN THE WINDOW MUST
+BE TYPED IN THE GAME LOOP
+*******************
+
+*******************
+TWO LINES THAT WILL ALWAYS BE THERE IN A PYGAME CODE ARE:
+pygame.init()
+pygame.display.update()
+THE FIRST LINE INITIALIZES PYGAME
+AND THE SECOND UPDATES THE DISPLAY WITH ANY COMMANDS BEFORE ITSELF
+*******************
+
+IMAGES
+=========
+=> to use any IMAGES make sure they are png type
+
+to change the icon of the screen we first use pygame.image.load("filepath") to load the image into a variable
+and then we use pygame.display.set_icon(variable)
+
+Eg: var = pygame.image.load("filepath")
+    pygame.display.set_icon(var)
+
+=> actually the pygame.image.load("filepath") command is used to load any image in pygame
+we equate it to some variable then use that variable as an equivalent for that image
+
+******************
+TO DRAW ANYTHING ON THE SCREEN Use
+screen.blit(<image variable> , (x , y))
+THIS IS OF COURSE AFTER WE INITIALIZE THE SCREEN VARIABLE AS THE DISPLAY
+i.e AFTER THE pygame.display.set_mode() statement
+******************
+
+MOVEMENT OF ANY IMAGE OR OBJECT ON THE GAME WINDOW
+==================================================
+=> to move any object in the game window we just change its x or y 
+values and screen.blit() it again
+
+=> or else we may make x_change or y_change variable which we add to the 
+x , y coordinates in the loop
+
+=> to bind the movement with a keystroke we check if a key is pressed
+and this is done inside the for loop where we iterate through the events that
+have transpired (i.e, the loop which contains the exit logic)
+using 
+
+    if event == pygame.KEYDOWN:
+
+then for checking if the key is the left/right arrow
+
+    if event.key == pygame.K_LEFT / pygame.K_RIGHT
+
+**********************
+FOR ANY KIND OF BINDING LIKE THIS 
+ALWAYS USE A X_CHANGE VARIABLE I.E, SOME VARIABLE THAT RECORDS
+THE CHANGE IN THE X COORDINATE
+THEN ADD THAT X_CHANGE TO THE X COORDINATE
+IF WE NORMALLY TRY TO INCREASE OR DECREASE THE X COORDINATE VALUE 
+IT WONT WORK 
+THIS IS BCOZ WHEN WE SET THE X_CHANGE VARIABLE AND THEN ADD IT TO 
+THE X COORDINATE, THE VALUE OF THE X_CHANGE REMAINS AND SO THE 
+OBJECT CONTINUES TO MOVE
+OTHERWISE IT MOVES ONLY A CERTAIN DISTANCE AND STOPS EVEN IF
+WE KEEP HOLDING THE KEY 
+**********************
+
+=> if we want to randomize the position of any sprite/image
+    we can use the random module's randint function with respective 
+    start and stop values of the boundaries
+
+    import random
+    random.randint(lower_limit, upper_limit)
+
+ADDING A BACKGROUND IMAGE
+==========================
+=> adding a background image is the same adding a player
+    we just load an image into variable and screen.blit()
+    it inside the game loop to ensure that it persists
+
+*********************
+NOTE THAT ADDING A BACKGROUND IMAGE WILL MAKE THE MOTION
+OF THE PLAYER AND OTHER OBJECTS SLOWER AS THE THE WHILE LOOP
+TAKES TIME TO LOAD THE IMAGE AND IT IS QUITE HEAVY. SO MAKE 
+SURE TO INCREASE THE SPEED OF THE MOVABLE OBJECTS BY 
+INCREASING THE X_CHANGE
+*********************
+
+THE BULLET
+==============
+=> to make sure a bullet starts from the same point as the spaceship
+    we just need to make their x-coordinates equal (here spaceship is always at set coordinates
+    so equating their y-coordinates doesn't matter)
+
+=> to make sure we can shoot multiple bullets, we make the bullet
+    come back to its original position (spaceship_x, set Y) after it
+    crosses a certain boundary (here: y = 0), and change state from FIRE to READY (see below)
+
+=> the bullet must have two states, FIRE and READY. 
+    the READY state is when the bullet isnt visible (due to no screen.blit statement)
+    the FIRE state is when the bullet is fired due to a keystroke
+    and screen.blit happens.
+
+    in the READY state it follows the spaceship, but in the FIRE state
+    we need to make sure its x-coordinate remains same but y continually decreases
+    (or basically it moves in one direction and keeps the other coordinate constant)
+    we can do this by using the spaceship corrdinate for READY state stuff,
+    but for FIRE state use bulletX = spaceship_x. this ensures that the last saved
+    spaceship_x value is where the bullet travels from, in a straight line.
+
+=> Also make sure that clicking the keystroke req for shooting can ONLY
+    be done if bullet is in READY condition, and not in FIRE, by using an
+    if statement.
+
+COLLISON
+================
+=> collisons can be detected by checking the distance between the enemy
+    and the bullet using the distance formula.
+
+        d = sqrt((x1-x2)^2 + (y1-y2)^2)
+
+    if this d is less than some specified value, then the enemy must
+    respawn and the bullet shifts bak to original position.
+
+MULTIPLE ENEMIES
+====================
+=> multiple enemies can be created by using a list for every variable related to enemies
+=> Also every enemy related function or action must be done for all enemies using a for loop
+
+TEXT
+====================
+=> to show text on the screen we use the below
+
+    font = pygame.font.Font('<some font>' , <size of text>)
+    score = font.render(<text to be shown> , True , <rgb value of color of font>)
+    screen.blit(score , (x,y))
+
+=> for the font to be used, use 'freesansbold.ttf'. The ttf is the extension for the 
+    font file. So we first render and then blit the score. The second arg in the font.render
+    func, i.e, the True part is to show score.
+
+MUSIC
+==================
+=> to add music, we use the mixer class from the pygame module
+
+    from pygame import mixer
+
+=> we can download music file (with .wav extension) from the web 
+    and then use them
+
+=> to load music and play 
+
+    mixer.music.load("<the .wav file>")
+    mixer.music.play(-1)
+
+    the '-1' arg is used to play in loop. so this statement need not be 
+    used inside the game loop
+
+******************************
+NOTE: MUSIC IS LONG DURATION SOUND
+    MEANWHILE SOUND IS SHORT DURATION
+    SO FOR SHORT DURATION SOUNDS USE
+
+    <var> = mixer.Sound()
+    <var>.play()
+
+    WITHOUT THE -1 ARG BCOZ WE DON'T WANT IT TO
+    PLAY IT ON LOOP
+
+    
