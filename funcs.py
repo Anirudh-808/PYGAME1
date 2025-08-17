@@ -23,6 +23,10 @@ def show_score(x, y):
     score = variables.font.render("Score: " + str(variables.score_val), True, (0, 255, 255))
     variables.screen.blit(score, (x, y))
 
+def show_lives(x, y):
+    lives = variables.lives_font.render("Lives: " + str(variables.player_lives), True, (255, 0, 0))
+    variables.screen.blit(lives, (x, y))
+
 def player(x , y):
     variables.screen.blit(variables.playerImg, (x , y))
 

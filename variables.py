@@ -16,6 +16,10 @@ playerImg = pygame.image.load("battleship.png")
 playerX = 360
 playerY = 500
 playerX_change = 0
+player_lives = 3
+
+# lives text
+lives_font = pygame.font.Font("freesansbold.ttf", 30)
 
 #enemy stuff
 #using lists for more than one enemy

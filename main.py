@@ -11,6 +11,9 @@ from funcs import *
 # to make sure the speedup is gradual
 last_speedup_score = 0
 
+#to check if game is over
+game_over = False
+
 #background
 mixer.music.load("BackOnTrack.mp3")
 mixer.music.set_volume(0.5)  # Set volume to 50%
@@ -45,7 +48,7 @@ while running:
             if event.key == pygame.K_a or event.key == pygame.K_d:
                 variables.playerX_change = 0
 
-    #player boundary logic
+    #player boundary logic and motion
     variables.playerX += variables.playerX_change
 
     if variables.playerX <= 0:
@@ -54,46 +57,57 @@ while running:
         variables.playerX = 736
 
     #enemy boundary logic and collision check and motion
-    for i in range(variables.enemy_count):
+    if not game_over:
+        for i in range(variables.enemy_count):
+            #game over logic
+            if variables.enemyY[i] > 440:
+                variables.player_lives -= 1
+                print("Player lives left:", variables.player_lives)
+                #resetting the enemy
+                variables.enemyX[i] = random.randint(0 , 736)
+                variables.enemyY[i] = random.randint(50 , 150)
 
-        #game over logic
-        if variables.enemyY[i] > 440:
-            mixer.music.stop()
-            for j in range(variables.enemy_count):
-                variables.enemyY[j] = 2000  # move enemy off screen
-            game_over_font = pygame.font.Font("freesansbold.ttf", 64)
-            game_over_text = game_over_font.render("GAME OVER", True, (255, 0, 0))
-            new_game_text = variables.font.render("Press 'N' to Restart", True, (255, 255, 255))
-            variables.screen.blit(game_over_text, (200, 250))
-            variables.screen.blit(new_game_text, (210, 320))
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_n:
-                        #restart game
-                        restart_game()
-                        mixer.music.play(-1)
-                else:
-                    break
+                if variables.player_lives == 0:
+                    mixer.music.stop()
+                    for j in range(variables.enemy_count):
+                        variables.enemyY[j] = 2000  # move enemy off screen
+                    game_over = True  # Set game over flag   
 
-        variables.enemyX[i] += variables.enemyX_change[i]*variables.enemyX_change_mult
+            variables.enemyX[i] += variables.enemyX_change[i]*variables.enemyX_change_mult
 
-        if variables.enemyX[i] <= 0:
-            variables.enemyX_change[i] = abs(variables.enemyX_change[i])
-            variables.enemyY[i] += variables.enemyY_change[i]
-        elif variables.enemyX[i] > 736:
-            variables.enemyX_change[i] = -(variables.enemyX_change[i])
-            variables.enemyY[i] += variables.enemyY_change[i]
+            if variables.enemyX[i] <= 0:
+                variables.enemyX_change[i] = abs(variables.enemyX_change[i])
+                variables.enemyY[i] += variables.enemyY_change[i]
+            elif variables.enemyX[i] > 736:
+                variables.enemyX_change[i] = -(variables.enemyX_change[i])
+                variables.enemyY[i] += variables.enemyY_change[i]
 
-        #collision check
-        if variables.bullet_state == "fire" and isCollision(variables.enemyX[i], variables.enemyY[i], variables.bulletX, variables.bulletY):
-            variables.score_val += 1
-            variables.bulletY = 500
-            variables.bullet_state = "ready"
-            #respawn enemy
-            variables.enemyX[i] = random.randint(0 , 736)
-            variables.enemyY[i] = random.randint(50 , 150)
+            #collision check
+            if variables.bullet_state == "fire" and isCollision(variables.enemyX[i], variables.enemyY[i], variables.bulletX, variables.bulletY):
+                variables.score_val += 1
+                variables.bulletY = 500
+                variables.bullet_state = "ready"
+                #respawn enemy
+                variables.enemyX[i] = random.randint(0 , 736)
+                variables.enemyY[i] = random.randint(50 , 150)
 
-        enemy(variables.enemyX[i], variables.enemyY[i], i)
+            enemy(variables.enemyX[i], variables.enemyY[i], i)
+
+    else:
+        game_over_font = pygame.font.Font("freesansbold.ttf", 64)
+        game_over_text = game_over_font.render("GAME OVER", True, (255, 0, 0))
+        new_game_text = variables.font.render("Press 'N' to Restart", True, (255, 255, 255))
+        variables.screen.blit(game_over_text, (200, 250))
+        variables.screen.blit(new_game_text, (210, 320))
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_n:
+                    #restart game
+                    restart_game()
+                    mixer.music.play(-1)
+                    game_over = False #reset the game over flag
+            else:
+                break
 
     #check if bullet hits the boundary
     #if so send it back to ready state
@@ -113,4 +127,5 @@ while running:
 
     player(variables.playerX, variables.playerY)
     show_score(10, 10)
+    show_lives(650, 10)
     pygame.display.update()
