@@ -12,10 +12,11 @@ def restart_game():
     variables.bulletY = 500
     variables.bullet_state = "ready"
     variables.score_val = 0
+    variables.enemyX_change_mult = 1
     for i in range(variables.enemy_count):
         variables.enemyX[i] = random.randint(0 , 736)
         variables.enemyY[i] = random.randint(50 , 150)
-        variables.enemyX_change[i] = 0.2
+        variables.enemyX_change[i] = 0.2*variables.enemyX_change_mult
         variables.enemyY_change[i] = 40
 
 def show_score(x, y):

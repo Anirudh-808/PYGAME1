@@ -24,13 +24,14 @@ enemyX = []
 enemyY = []
 enemyX_change = []
 enemyY_change = []
+enemyX_change_mult = 1
 enemy_count = 8
 
 for i in range(enemy_count):
     enemyImg.append(pygame.image.load("enemy.png"))
     enemyX.append(random.randint(0 , 736))
     enemyY.append(random.randint(50 , 150))
-    enemyX_change.append(0.2)
+    enemyX_change.append(0.2*enemyX_change_mult)
     enemyY_change.append(40)
 
 #bullet stuff

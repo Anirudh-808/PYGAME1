@@ -8,6 +8,9 @@ pygame.init()
 import variables
 from funcs import *
 
+# to make sure the speedup is gradual
+last_speedup_score = 0
+
 #background
 mixer.music.load("CantLetGo.mp3")
 mixer.music.set_volume(0.5)  # Set volume to 50%
@@ -50,7 +53,7 @@ while running:
     elif variables.playerX >= 736:
         variables.playerX = 736
 
-    #enemy boundary logic and collision check
+    #enemy boundary logic and collision check and motion
     for i in range(variables.enemy_count):
 
         #game over logic
@@ -72,13 +75,13 @@ while running:
                 else:
                     break
 
-        variables.enemyX[i] += variables.enemyX_change[i]
+        variables.enemyX[i] += variables.enemyX_change[i]*variables.enemyX_change_mult
 
         if variables.enemyX[i] <= 0:
-            variables.enemyX_change[i] = 0.2
+            variables.enemyX_change[i] = abs(variables.enemyX_change[i])
             variables.enemyY[i] += variables.enemyY_change[i]
         elif variables.enemyX[i] > 736:
-            variables.enemyX_change[i] = -0.2
+            variables.enemyX_change[i] = -(variables.enemyX_change[i])
             variables.enemyY[i] += variables.enemyY_change[i]
 
         #collision check
@@ -89,12 +92,6 @@ while running:
             #respawn enemy
             variables.enemyX[i] = random.randint(0 , 736)
             variables.enemyY[i] = random.randint(50 , 150)
-
-        # GAME PROGRESSION
-        if variables.score_val % 5 == 0 and variables.score_val >= 5:
-            #increase enemy speed
-            for j in range(variables.enemy_count):
-                variables.enemyX_change[j] += 0.0001
 
         enemy(variables.enemyX[i], variables.enemyY[i], i)
 
@@ -107,6 +104,13 @@ while running:
     if variables.bullet_state == "fire":
         fire_bullet(variables.bulletX, variables.bulletY)
         variables.bulletY -= variables.bulletY_change
+
+    # GAME PROGRESSION
+    if variables.score_val % 5 == 0 and variables.score_val >= 5 and variables.score_val != last_speedup_score:
+        #increase enemy speed
+        variables.enemyX_change_mult += 0.1
+        print(variables.enemyX_change_mult)  # Debugging line to see the speed multiplier
+        last_speedup_score = variables.score_val
 
     player(variables.playerX, variables.playerY)
     show_score(10, 10)
