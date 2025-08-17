@@ -18,6 +18,11 @@ playerY = 500
 playerX_change = 0
 player_lives = 3
 
+# special move
+boost = False
+energy = 0
+BeamImg = pygame.image.load("Beam.png")
+
 # lives text
 lives_font = pygame.font.Font("freesansbold.ttf", 30)
 

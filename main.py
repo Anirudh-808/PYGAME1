@@ -14,6 +14,9 @@ last_speedup_score = 0
 #to check if game is over
 game_over = False
 
+# Beam timer
+beam_timer = 0
+
 #background
 mixer.music.load("BackOnTrack.mp3")
 mixer.music.set_volume(0.5)  # Set volume to 50%
@@ -24,7 +27,7 @@ running = True
 while running:
     variables.screen.fill((0,0,0))
 
-    #exit logic
+    #exit logic and keystrokes
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -35,12 +38,16 @@ while running:
                 variables.playerX_change = -0.4
             if event.key == pygame.K_d:
                 variables.playerX_change = 0.4
+            if event.key == pygame.K_e:
+                if variables.energy >= 90 and beam_timer == 0:
+                    variables.boost = True
+                    beam_timer = pygame.time.get_ticks()  # Start timer
+                    variables.bullet_state = "halt" # to make sure that user can't shoot when beam is active
             if event.key == pygame.K_SPACE:
                 #to make sure bullet can only be shot is it is READY
                 if variables.bullet_state == "ready":
                     variables.bulletX = variables.playerX
                     variables.bulletY = variables.playerY
-                    #fire_bullet(bulletX, bulletY)
                     variables.bullet_state = "fire"
                     mixer.Sound("laser2.mp3").play()
 
@@ -85,6 +92,7 @@ while running:
             #collision check
             if variables.bullet_state == "fire" and isCollision(variables.enemyX[i], variables.enemyY[i], variables.bulletX, variables.bulletY):
                 variables.score_val += 1
+                variables.energy += 10
                 variables.bulletY = 500
                 variables.bullet_state = "ready"
                 #respawn enemy
@@ -119,7 +127,15 @@ while running:
         fire_bullet(variables.bulletX, variables.bulletY)
         variables.bulletY -= variables.bulletY_change
 
-    # GAME PROGRESSION
+    #beam timer
+    if variables.boost:
+        fire_bullet(variables.playerX, variables.playerY, True)
+        # Beam lasts for 5 seconds
+        if pygame.time.get_ticks() - beam_timer > 5000:
+            variables.boost = False
+            beam_timer = 0
+
+    # enemy speedup
     if variables.score_val % 5 == 0 and variables.score_val >= 5 and variables.score_val != last_speedup_score:
         #increase enemy speed
         variables.enemyX_change_mult += 0.1

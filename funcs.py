@@ -33,9 +33,12 @@ def player(x , y):
 def enemy(x , y, i):
     variables.screen.blit(variables.enemyImg[i], (x , y))
 
-def fire_bullet(x,y):
-    variables.bullet_state = "fire"
-    variables.screen.blit(variables.bulletImg, (x + 16, y + 10))
+def fire_bullet(x,y,flag = False):
+    if flag == True:
+        variables.screen.blit(variables.BeamImg, (x, y))
+    else:
+        variables.bullet_state = "fire"
+        variables.screen.blit(variables.bulletImg, (x + 16, y + 10))
 
 def isCollision(enemyX, enemyY, bulletX, bulletY):
     distance = ((enemyX - bulletX) ** 2 + (enemyY - bulletY) ** 2) ** 0.5
