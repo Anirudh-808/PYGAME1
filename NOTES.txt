@@ -196,4 +196,6 @@ NOTE: MUSIC IS LONG DURATION SOUND
     WITHOUT THE -1 ARG BCOZ WE DON'T WANT IT TO
     PLAY IT ON LOOP
 
-    
+MUSIC SITES:
+1. freesound.org 
+2. internet archive (archive.org)

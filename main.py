@@ -12,7 +12,7 @@ from funcs import *
 last_speedup_score = 0
 
 #background
-mixer.music.load("CantLetGo.mp3")
+mixer.music.load("BackOnTrack.mp3")
 mixer.music.set_volume(0.5)  # Set volume to 50%
 mixer.music.play(-1)  # -1 means loop indefinitely
 
@@ -109,7 +109,6 @@ while running:
     if variables.score_val % 5 == 0 and variables.score_val >= 5 and variables.score_val != last_speedup_score:
         #increase enemy speed
         variables.enemyX_change_mult += 0.1
-        print(variables.enemyX_change_mult)  # Debugging line to see the speed multiplier
         last_speedup_score = variables.score_val
 
     player(variables.playerX, variables.playerY)
