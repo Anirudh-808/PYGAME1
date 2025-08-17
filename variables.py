@@ -24,7 +24,7 @@ enemyX = []
 enemyY = []
 enemyX_change = []
 enemyY_change = []
-enemy_count = 10
+enemy_count = 8
 
 for i in range(enemy_count):
     enemyImg.append(pygame.image.load("enemy.png"))
